@@ -1,0 +1,6 @@
+services:
+  myservice:
+    image: alpine  # Use an appropriate image for your use case
+    volumes:
+      - ./tmp:/app/data  # Bind mount `./data` directory to `/app/data` in the container
+    command: sh -c "echo '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<coverage>\n  <file path=\"samplefile.py\">\n    <line number=\"1\" hits=\"1\"/>\n    <line number=\"2\" hits=\"0\"/>\n    <line number=\"3\" hits=\"1\"/>\n  </file>\n</coverage>' > /app/data/coverage.xml"
