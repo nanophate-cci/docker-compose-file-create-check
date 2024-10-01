@@ -1,0 +1,59 @@
+version: 2.1
+
+
+jobs:
+  setup-ubuntu:
+    parameters:
+      image-type:
+        type: string
+        default: "ubuntu-2204:current"
+    description: >
+      Creates directories and files using specified Ubuntu machine images.
+    machine:
+      image: << parameters.image-type >>
+    steps:
+      - checkout
+
+      - run:
+          name: Display Ubuntu Version
+          command: lsb_release -a || cat /etc/os-release
+
+      - run:
+          name: Create File
+          command: |
+            touch ~/project/sample_file.txt
+            echo "Sample file created at ~/sample_file.txt"
+
+      - run:
+          name: Run Docker info
+          command: docker info
+
+      - run:  ls -la /usr/local/bin/docker-compose
+
+      - run:
+          name: Run Docker Compose
+          command: docker-compose up --exit-code-from myservice
+          
+      - run:
+          name: Check the generated file
+          command: cat tmp/coverage.xml
+
+      - run:
+          name: List Directory Contents
+          command: |
+            ls -la ~/project
+            echo "Contents of ~/project listed."
+            ls -la ~/project/tmp
+            echo "Contents of ~/project/tmp listed."
+
+
+workflows:
+  setup-workflow:
+    jobs:
+      - setup-ubuntu:
+          matrix:
+            parameters:
+              image-type:
+                - "ubuntu-2204:current"  # Ubuntu 22.04
+                - "ubuntu-2004:current"  # Ubuntu 20.04
+                - "ubuntu-2404:current"  # Ubuntu 24.04 (Ensure this image exists)
